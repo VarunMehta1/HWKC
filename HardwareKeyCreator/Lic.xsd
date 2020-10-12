@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="Lic"
+    targetNamespace="http://tempuri.org/Lic.xsd"
+    elementFormDefault="qualified"
+    xmlns="http://tempuri.org/Lic.xsd"
+    xmlns:mstns="http://tempuri.org/Lic.xsd"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   
+>
+	<xs:element name="Order">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Keys">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Key" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Licenses">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="License">
+														<xs:complexType>
+															<xs:attribute name="name" type="xs:string"></xs:attribute>
+															<xs:attribute name="smartId" type="xs:string"></xs:attribute>
+															<xs:attribute name="smartName" type="xs:string"></xs:attribute>
+															<xs:attribute name="assetId" type="xs:string"></xs:attribute>
+															<xs:attribute name="activationCode" type="xs:string"></xs:attribute>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="name" type="xs:string"></xs:attribute>
+									<xs:attribute name="expirationDate" type="xs:int"></xs:attribute>
+									<xs:attribute name="assetAction" type="xs:string"></xs:attribute>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="xsi:http://www.w3.org/2001/Lic.xsd, Lic.xsd" type="xs:string"></xs:attribute>
+			<xs:attribute name="licenseCreateDate" type="xs:int"></xs:attribute>
+			<xs:attribute name="customerName" type="xs:string"></xs:attribute>
+			<xs:attribute name="csn" type="xs:int"></xs:attribute>
+			<xs:attribute name="orderNumber" type="xs:string"></xs:attribute>
+			<xs:attribute name="deliveryNumber" type="xs:string"></xs:attribute>
+			<xs:attribute name="po" type="xs:int"></xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
