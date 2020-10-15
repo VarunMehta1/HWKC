@@ -1,0 +1,44 @@
+﻿<Window x:Class="HardwareKeyCreator.frmAllOrders"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:HardwareKeyCreator"
+        mc:Ignorable="d"
+        Title="M5 Key Creator" Height="450" Width="800" Loaded="loadOrders" Unloaded="Window_Unloaded">
+
+    <Grid >
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="15*"/>
+            <ColumnDefinition Width="165*"/>
+            <ColumnDefinition Width="30*"/>
+            <ColumnDefinition Width="220*"/>
+            <ColumnDefinition Width="45*"/>
+            <ColumnDefinition Width="317*"/>
+        </Grid.ColumnDefinitions>
+        <Label Content="Orders:" Foreground="Black"   FontSize="20"  FontFamily="Bold" HorizontalAlignment="Left" Margin="208,25,0,0" VerticalAlignment="Top" FontWeight="Medium" Grid.Column="6"/>
+        <WrapPanel HorizontalAlignment="Left" Height="25" Background="Black" Margin="4,0,0,0" VerticalAlignment="Top" Width="788" Grid.ColumnSpan="7"/>
+        <WrapPanel HorizontalAlignment="Left" Height="45" Background="Black" Margin="4,374,0,0" VerticalAlignment="Top" Width="788" Grid.ColumnSpan="7"/>
+        <DataGrid x:Name="dgvOrders"  ColumnWidth="*" HorizontalAlignment="Left" AlternatingRowBackground="LightGray" Background="White"  Height="271" Margin="9,59,0,0" VerticalAlignment="Top" Width="769" Grid.ColumnSpan="7"/>
+        <Button  x:Name="btnUpdateSFDC" Content="Upload SFDC" HorizontalAlignment="Left"  IsEnabled="False" Margin="10,338,0,0" VerticalAlignment="Top" Width="90" Background="White" Height="30" Grid.ColumnSpan="3" >
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Button Content="Fill" HorizontalAlignment="Left"  IsEnabled="False" Margin="96,336,0,0" VerticalAlignment="Top" Width="90" Background="White" Height="30" Grid.Column="2" Grid.ColumnSpan="2" >
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Label Content="@2020 Emerson. All Right Reserved." Foreground="White"   FontSize="15"  FontFamily="Bold" HorizontalAlignment="Left" Margin="10,383,0,0" VerticalAlignment="Top" FontWeight="Medium" Grid.ColumnSpan="5" Width="265"/>
+        <Label  x:Name="lblXMLCount" Content="0" Foreground="Black"   FontSize="20"  FontFamily="Bold" HorizontalAlignment="Left" Margin="282,25,0,0" VerticalAlignment="Top" FontWeight="Medium" RenderTransformOrigin="2.338,0.588" Grid.Column="6"/>
+        <Button  x:Name="btnHome" Content="Home" HorizontalAlignment="Left"  IsEnabled="True" Margin="215,333,0,0" VerticalAlignment="Top" Width="90" Background="White" Height="30" Grid.Column="6" Click="Button_Click" >
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+
+    </Grid>
+</Window>

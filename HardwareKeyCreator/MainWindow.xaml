@@ -4,9 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HardwareKeyCreator"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d"
         Title="Emerson Hardware Key Creator" Height="550" Width="1059">
+    
     <Grid>
+  
         <GroupBox  x:Name="grpXMLInfo"  Header="XML Info" HorizontalAlignment="Left" Foreground="Blue" Height="50" VerticalAlignment="Top" Width="881" Margin="14,44,0,0">
             <TextBlock  x:Name="txtXMLPath" HorizontalAlignment="Left" Margin="132,0,0,-2"  FontFamily="Arial Narrow" FontSize="15" Foreground="Blue" TextAlignment="Center" TextWrapping="Wrap" VerticalAlignment="Bottom" Height="28" Width="696" Grid.ColumnSpan="4"/>
         </GroupBox>
@@ -21,10 +24,6 @@
                 HorizontalContentAlignment="Stretch" 
                 ColumnWidth="*"  Margin="10,5,18,0" VerticalAlignment="Top"/>
         </GroupBox>
-
-
-
-
         <GroupBox  x:Name="grpKeyInfo"  Header="Key Info" HorizontalAlignment="Left" Foreground="Blue" Height="140" VerticalAlignment="Top" Width="995" Margin="10,180,0,0">
             <DataGrid x:Name="dgvKeyInfo" Height="140" Margin="10,7,18,0" VerticalAlignment="Top"   IsReadOnly="True" HorizontalAlignment="Stretch" 
                 HorizontalContentAlignment="Stretch" 
@@ -37,7 +36,12 @@
         </GroupBox>
         <Label Content="Emerson Hardware Key Creator" HorizontalAlignment="Right" Margin="0,11,323,0" FontFamily="Arial Black" FontSize="18" FontStyle="Normal" Foreground="Blue" VerticalAlignment="Top" RenderTransformOrigin="0.526,-0.385" Opacity="0.7" Width="430"/>
         <Label Content="Select XML Path" Foreground="Blue" FontSize="15"   HorizontalAlignment="Left" Margin="22,60,0,0" VerticalAlignment="Top" FontWeight="Medium"/>
-        <Button Content="Download" HorizontalAlignment="Left" Margin="928,481,0,8" Width="92" Click="createXML_Output" Background="White" >
+        <Button Content="Download" HorizontalAlignment="Left" Margin="928,481,0,0" Width="92" Click="createXML_Output" Background="White" Height="30" VerticalAlignment="Top" >
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Button  x:Name="btnAllOrders" Content="All Orders" HorizontalAlignment="Left" Margin="14,480,0,9" Width="90" Click="getAllOrders" Background="White" >
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>

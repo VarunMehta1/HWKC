@@ -16,6 +16,8 @@ using System.Xml;
 using System.Data;
 using System.Xml.Linq;
 using HardwareKeyOrderProcessor;
+using System.Xml.Schema;
+
 namespace HardwareKeyCreator
 {
     /// <summary>
@@ -35,27 +37,63 @@ namespace HardwareKeyCreator
         {
             InitializeComponent();
         }
-
-
-
-        private void BrowseXmlFile(object sender, RoutedEventArgs e)
+        public bool _result;
+        private Boolean compareXMLXSD(string _xml, string _xsd)
         {
+
             try
             {
-                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-                dlg.CheckFileExists = true;
-                dlg.Filter = "XML Files (*.xml)|*.xml|All Files(*.*)|*.*";
-                dlg.Multiselect = false;
+                var path = new Uri(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase)).LocalPath;
+                XmlSchemaSet schema = new XmlSchemaSet();
+                schema.Add("", _xsd);// ("", path + "\\input.xsd");
+                XmlReader rd = XmlReader.Create(_xml);// (path + "\\input.xml");
+                XDocument doc = XDocument.Load(rd);
+                doc.Validate(schema, ValidationEventHandler);
+                _result = true;
+            }
+            catch (Exception ee)
+            {
+                
+                return false; ;
+            }
+            return _result;
+        }
+        static void ValidationEventHandler(object sender, ValidationEventArgs e)
+        {
+
+            XmlSeverityType type = XmlSeverityType.Warning;
+            if (Enum.TryParse<XmlSeverityType>("Error", out type))
+            {
+                if (type == XmlSeverityType.Error) throw new Exception(e.Message);
+            }
+
+        }
+
+
+   
+    private void BrowseXmlFile(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.CheckFileExists = true;
+            dlg.Filter = "XML Files (*.xml)|*.xml|All Files(*.*)|*.*";
+            dlg.Multiselect = false;
 
 
 
-                if (dlg.ShowDialog() == true) { txtXMLPath.Text = dlg.FileName; }
+                if (dlg.ShowDialog() == true)
+                { txtXMLPath.Text = dlg.FileName; }
 
 
+                if (compareXMLXSD(txtXMLPath.Text, @"C:/HardwareKeyOrders.xsd") == true)
+                { BindXmlInfo(); }
+                else
+                { MessageBox.Show("XML validation Fails"); return; }
                
 
-                BindXmlInfo();
-            }
+
+            }//
             catch (XmlException xe)
             {
                 MessageBox.Show(xe.Message.ToString(), "BrowseXMLFile");
@@ -65,18 +103,7 @@ namespace HardwareKeyCreator
             {
                 MessageBox.Show(ex.Message.ToString(), "BrowseXMLFile");
             }
-
-
-
         }
-
-
-
-        /// <summary>
-        /// Call to ReadXmlFile() function of XMLFileParser
-        /// Return Dictionary objects which has file nodes information
-        /// Iterate over each of the nodelist object and bind it to gridview
-        /// </summary>
 
         public void BindXmlInfo()
         {
@@ -87,12 +114,7 @@ namespace HardwareKeyCreator
             XmlNodeList xKeysList = XNodeList["Keys"];
             XmlNodeList xLicenseList = XNodeList["License"];
 
-
-
             // Order information and Binding
-
-
-
             DataTable dtOrderInfo = new DataTable();
             dtOrderInfo.Columns.Add("PO", typeof(string));
             dtOrderInfo.Columns.Add("DeliveryNumber", typeof(string));
@@ -100,9 +122,6 @@ namespace HardwareKeyCreator
             dtOrderInfo.Columns.Add("CSN", typeof(string));
             dtOrderInfo.Columns.Add("CustomerName", typeof(string));
             dtOrderInfo.Columns.Add("LicenseCreateDate", typeof(string));
-
-
-
             foreach (XmlNode node in xOrderList)
             {
                 //Fetch the Node and Attribute values.
@@ -115,25 +134,16 @@ namespace HardwareKeyCreator
                 dtrow["licenseCreateDate"] = node.Attributes["licenseCreateDate"].Value;
                 dtOrderInfo.Rows.Add(dtrow);
             }
-
-
-
             //Bind order information data table to gridview
             dgvInfo.ItemsSource = new DataView(dtOrderInfo);
 
             // Save Order info to Dataset. This dataset can be further used to download XML
             clsGlobalClass.dtOrderInfo = dtOrderInfo;
-
-
             // Keys Information and its binding
-
-
             DataTable dtKeyInfo = new DataTable();
             dtKeyInfo.Columns.Add("AssetAction", typeof(string));
             dtKeyInfo.Columns.Add("ExpireDate", typeof(string));
             dtKeyInfo.Columns.Add("Name", typeof(string));
-
-
 
             foreach (XmlNode node in xKeysList)
             {
@@ -145,26 +155,17 @@ namespace HardwareKeyCreator
                 dtKeyInfo.Rows.Add(dtKeyrow);
             }
 
-
-
             //Bind key information data table to gridview
             dgvKeyInfo.ItemsSource = new DataView(dtKeyInfo);
             // Save Key info to Dataset. This dataset can be further used to download XML
             clsGlobalClass.dtKeyInfo = dtKeyInfo;
-
-
             //License Information and its binding
-
-
-
             DataTable dtLicenseInfo = new DataTable();
             dtLicenseInfo.Columns.Add("Name", typeof(string));
             dtLicenseInfo.Columns.Add("AssetId", typeof(string));
             dtLicenseInfo.Columns.Add("ActivationCode", typeof(string));
             dtLicenseInfo.Columns.Add("SmartName", typeof(string));
             dtLicenseInfo.Columns.Add("SmartId", typeof(string));
-
-
 
             foreach (XmlNode node in xLicenseList)
             {
@@ -177,9 +178,6 @@ namespace HardwareKeyCreator
                 dtLicenserow["smartId"] = node.Attributes["smartId"].Value;
                 dtLicenseInfo.Rows.Add(dtLicenserow);
             }
-
-
-
             //Bind License information data table to gridview
             dgvLicenseInfo.ItemsSource = new DataView(dtLicenseInfo);
 
@@ -187,150 +185,109 @@ namespace HardwareKeyCreator
             clsGlobalClass.dtLicenseInfo = dtLicenseInfo;
 
         }
-
-
-
-
-
+        //To create XML as output
         private void createXML_Output(object sender, RoutedEventArgs e)
-        {
-           
-            DataSet ds = new DataSet();
-            DataTable dtXMLValue = new DataTable();
-            System.IO.StringWriter writer = new System.IO.StringWriter();
-            ////dtReadFromGlobal.WriteXml(writer, XmlWriteMode.WriteSchema, false);
-
-            //DataSet dataSet = new DataSet("ds");
-            //DataTable table1 = dataSet.Tables.Add("Order");
-            //table1 = clsGlobalClass.dtOrderInfo;
-            //DataTable table2 = dataSet.Tables.Add("Student");
-
-            //table2 = clsGlobalClass.dtOrderInfo;
+        {  createXML_Output(); }
 
 
-
-
-
-            ////ds.Tables.Add(clsGlobalClass.dtOrderInfo);
-            ////ds.Tables[0].TableName = "Order";
-
-            ////ds.Tables.Add(clsGlobalClass.dtKeyInfo);
-            ////ds.Tables[1].TableName = "Key";
-
-            ////ds.Tables.Add(clsGlobalClass.dtLicenseInfo);
-            ////ds.Tables[2].TableName = "Lic";
-
-            ////ds.WriteXml("order.xml");
-      
-
-
-
-            //  XElement xOrder = new XElement("Order", "Adventure Works");// new XElement("Order", new XElement("Cost", 324.50));
-            XElement contacts =
-      new XElement("Order",
-          new XElement("Keys",
-              new XElement("Name", "Patrick Hines"),
-              new XElement("Phone", "206-555-0144"),
-              new XElement("Address",
-                  new XElement("Street1", "123 Main St"),
-                  new XElement("City", "Mercer Island"),
-                  new XElement("State", "WA"),
-                  new XElement("Postal", "68042")
-              )
-          )
-      );
-
-
-            MessageBox.Show(contacts.ToString());
-            test();
-
-        }
-
-
-        public void test()
+        public void createXML_Output()
         {
             //Create XML Document
             XmlDocument xmlDoc = new XmlDocument();
             // Create Master Node: Order
-            XmlNode Order = xmlDoc.CreateElement("Order");
+            XmlNode nodeOrder = xmlDoc.CreateElement("OrderStatusDetails");
             //Adding elements to Master Node : order
-            XmlAttribute po = xmlDoc.CreateAttribute("po");
-            po.Value = clsGlobalClass.dtOrderInfo.Rows[0]["po"].ToString();
-            XmlAttribute deliveryNumber = xmlDoc.CreateAttribute("deliveryNumber");
-            deliveryNumber.Value = clsGlobalClass.dtOrderInfo.Rows[0]["deliveryNumber"].ToString();
-            XmlAttribute csn = xmlDoc.CreateAttribute("csn");
-            csn.Value = clsGlobalClass.dtOrderInfo.Rows[0]["csn"].ToString();
-            XmlAttribute customerName = xmlDoc.CreateAttribute("customerName");
-            customerName.Value = clsGlobalClass.dtOrderInfo.Rows[0]["customerName"].ToString();
-            XmlAttribute licenseCreateDate = xmlDoc.CreateAttribute("licenseCreateDate");
-            licenseCreateDate.Value = clsGlobalClass.dtOrderInfo.Rows[0]["licenseCreateDate"].ToString();
-
+            //XmlAttribute attPO = xmlDoc.CreateAttribute("po");
+            //attPO.Value = clsGlobalClass.dtOrderInfo.Rows[0]["po"].ToString();
+            XmlAttribute attStatus = xmlDoc.CreateAttribute("Status");
+            attStatus.Value = "In Progress";
+            XmlAttribute attDeliveryNumber = xmlDoc.CreateAttribute("deliveryNumber");
+            attDeliveryNumber.Value = clsGlobalClass.dtOrderInfo.Rows[0]["deliveryNumber"].ToString();
+            XmlAttribute attDeliverydate = xmlDoc.CreateAttribute("deliveryDate");
+            attDeliverydate.Value = "000000";
+            //XmlAttribute attCSN = xmlDoc.CreateAttribute("csn");
+            //attCSN.Value = clsGlobalClass.dtOrderInfo.Rows[0]["csn"].ToString();
+            //XmlAttribute attCustomerName = xmlDoc.CreateAttribute("customerName");
+            //attCustomerName.Value = clsGlobalClass.dtOrderInfo.Rows[0]["customerName"].ToString();
+            //XmlAttribute attLicenseCreateDate = xmlDoc.CreateAttribute("licenseCreateDate");
+            //attLicenseCreateDate.Value = clsGlobalClass.dtOrderInfo.Rows[0]["licenseCreateDate"].ToString();
+            XmlAttribute attOrderNo = xmlDoc.CreateAttribute("OrderNumber");
+            attOrderNo.Value = clsGlobalClass.dtOrderInfo.Rows[0]["orderNumber"].ToString();
+            XmlAttribute namespace1 = xmlDoc.CreateAttribute("xmlns:xsd");
+            namespace1.Value = "http://www.w3.org/2001/Lic.xsd";
+            XmlAttribute namespace2 = xmlDoc.CreateAttribute("xmlns:xsi");
+            namespace2.Value = "http://www.w3.org/2001/Lic.xsd";
             // Adding attributes to Master Node
-            Order.Attributes.Append(po);
-            Order.Attributes.Append(deliveryNumber);
-            Order.Attributes.Append(csn);
-            Order.Attributes.Append(customerName);
-            Order.Attributes.Append(licenseCreateDate);
-            xmlDoc.AppendChild(Order);
 
+            nodeOrder.Attributes.Append(namespace1);
+            nodeOrder.Attributes.Append(namespace2);
+           // nodeOrder.Attributes.Append(attLicenseCreateDate);
+           // nodeOrder.Attributes.Append(attCSN);
+           // nodeOrder.Attributes.Append(attCustomerName);
+            nodeOrder.Attributes.Append(attDeliveryNumber);
+            nodeOrder.Attributes.Append(attStatus);
+            nodeOrder.Attributes.Append(attDeliverydate);
+          
+             nodeOrder.Attributes.Append(attOrderNo);
+            xmlDoc.AppendChild(nodeOrder);
+            //    adding Node to master node
+            XmlNode nodeKeys = xmlDoc.CreateElement("KeyStatusDetails");
 
-            // adding Node to master node
-
-            XmlNode he = xmlDoc.CreateElement("Keys");
-         
-            // loop N Times:
-            // N: No of licensee
+            XmlAttribute attdevideID = xmlDoc.CreateAttribute("deviceID");
+            attdevideID.Value = "Device ID";// clsGlobalClass.dtKeyInfo.Rows[0]["activationCode"].ToString();
+            XmlAttribute attAction = xmlDoc.CreateAttribute("action");
+            attAction.Value = "Action";//clsGlobalClass.dtKeyInfo.Rows[0]["activationCode"].ToString();
+            XmlAttribute attNameKeys = xmlDoc.CreateAttribute("name");
+            attNameKeys.Value = "Name";// clsGlobalClass.dtKeyInfo.Rows[0]["activationCode"].ToString();
+            nodeKeys.Attributes.Append(attdevideID);
+            nodeKeys.Attributes.Append(attAction);
+            nodeKeys.Attributes.Append(attNameKeys);
+            //    loop N Times:
+            //N: No of licensee
             for (int i = 0; i < clsGlobalClass.dtKeyInfo.Rows.Count; i++)
             {
-               
-                XmlNode Key = xmlDoc.CreateElement(@"Key");
-
-                // Adding attributes to Key Node
-                XmlAttribute assetAction = xmlDoc.CreateAttribute("assetAction");
-                assetAction.Value = clsGlobalClass.dtKeyInfo.Rows[i]["assetAction"].ToString();
-
-                XmlAttribute expirationDate = xmlDoc.CreateAttribute("expirationDate");
-                expirationDate.Value = clsGlobalClass.dtKeyInfo.Rows[i]["ExpireDate"].ToString();
-
-                XmlAttribute name = xmlDoc.CreateAttribute("assetAction");
-                name.Value = clsGlobalClass.dtKeyInfo.Rows[i]["assetAction"].ToString();
-
-                Key.Attributes.Append(assetAction);
-                Key.Attributes.Append(expirationDate);
-                Key.Attributes.Append(name);
-                he.AppendChild(Key);
-
-                XmlNode Lic = xmlDoc.CreateElement("Licenses");
-                // declaring  attributes to Lic Node
-                XmlAttribute lic_name = xmlDoc.CreateAttribute("name");
-                lic_name.Value = clsGlobalClass.dtLicenseInfo.Rows[i]["name"].ToString();
-
-                XmlAttribute assetId = xmlDoc.CreateAttribute("assetId");
-                assetId.Value = clsGlobalClass.dtLicenseInfo.Rows[i]["assetId"].ToString();
-
-                XmlAttribute activationCode = xmlDoc.CreateAttribute("activationCode");
-                activationCode.Value = clsGlobalClass.dtLicenseInfo.Rows[i]["activationCode"].ToString();
-
-
-                XmlAttribute smartName = xmlDoc.CreateAttribute("smartName");
-                smartName.Value = clsGlobalClass.dtLicenseInfo.Rows[i]["smartName"].ToString();
-
-                XmlAttribute smartID = xmlDoc.CreateAttribute("smartId");
-                smartID.Value = clsGlobalClass.dtLicenseInfo.Rows[i]["smartId"].ToString();
-
-                // adding attributes to Lic Node
-                Lic.Attributes.Append(lic_name);
-                Lic.Attributes.Append(assetId);
-                Lic.Attributes.Append(activationCode);
-                Lic.Attributes.Append(smartName);
-                Lic.Attributes.Append(smartName);
-                Key.AppendChild(Lic);
+                XmlNode nodeKey = xmlDoc.CreateElement(@"ActivationCodes");
+                nodeKeys.AppendChild(nodeKey);
+                XmlNode nodeLic = xmlDoc.CreateElement("ActivationCode");
+                nodeLic.InnerText = clsGlobalClass.dtLicenseInfo.Rows[i]["activationCode"].ToString();
+                nodeKey.AppendChild(nodeLic);
             }
-            Order.AppendChild(he);
+            nodeOrder.AppendChild(nodeKeys);
+            //Add new Node: CreatedImageFile
+            XmlNode nodeCreatedImageFile = xmlDoc.CreateElement(@"CreatedImageFile");
+            XmlAttribute attDescription = xmlDoc.CreateAttribute("Password");
+            attDescription.Value = "Password";
+            XmlAttribute attFileNAme = xmlDoc.CreateAttribute("FileNAme");
+            attFileNAme.Value = "File Name";
+            //Adding Attributes to node and append
+            nodeCreatedImageFile.Attributes.Append(attDescription);
+            nodeCreatedImageFile.Attributes.Append(attFileNAme);
+            nodeOrder.AppendChild(nodeCreatedImageFile);
+            //Add new Node: UpdatedSFDC
+            XmlNode nodeUpdatedSFDC = xmlDoc.CreateElement(@"UpdatedSFDC");
+            XmlAttribute attError = xmlDoc.CreateAttribute("error");
+            attError.Value = "Object reference not set to an instance of an object.";
+            //Adding Attributes to node and append
+            nodeUpdatedSFDC.Attributes.Append(attError);
+            nodeOrder.AppendChild(nodeUpdatedSFDC);
+            //Add new Node: KeyStatus
+            XmlNode nodeKeyStatus = xmlDoc.CreateElement(@"KeyStatus");
+            XmlAttribute attKeyStatus = xmlDoc.CreateAttribute("Description");
+            //Adding Attributes to node and append
+            attKeyStatus.Value = "Error occured updating Sales Force for the keyless.";
+            nodeKeyStatus.Attributes.Append(attKeyStatus);
+            nodeOrder.AppendChild(nodeKeyStatus);
+            //Save XML Output to BuildOutput. 
             xmlDoc.Save(System.IO.Path.GetFileName(txtXMLPath.Text));
-
-
-
         }
+
+        private void getAllOrders(object sender, RoutedEventArgs e)
+        {
+            frmAllOrders objAllOrders = new frmAllOrders();
+            
+            objAllOrders.Show();
+            this.Hide();
+        }
+      
     }
 }

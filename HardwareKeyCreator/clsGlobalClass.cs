@@ -22,7 +22,10 @@ namespace HardwareKeyCreator
         public static DataTable dtKeyInfo;
         //Static dataset to hold value for LicDetails
         public static DataTable dtLicenseInfo;
-
+        //Static dataset to hold value for order details 
+        public static DataTable dtAllOrderInfo;
+        //Static XML Schema to check Validation on XML
+        public static string _xmlSchemaToValidate = "";
     }
 
    
