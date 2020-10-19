@@ -4,6 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareKeyCreator", "HardwareKeyCreator\HardwareKeyCreator.csproj", "{5C0C96AD-D755-44C6-A41E-8133DD5539A1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{15378351-4FFB-418F-84D4-D0D86198EFF0} = {15378351-4FFB-418F-84D4-D0D86198EFF0}
+		{45FE2F6A-F0E1-4DBC-AE34-7996E09DF0C7} = {45FE2F6A-F0E1-4DBC-AE34-7996E09DF0C7}
+		{0317196B-F078-43A2-A507-87F508ABD15E} = {0317196B-F078-43A2-A507-87F508ABD15E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HardwareKeyLicenseManager", "HardwareKeyLicenseManager\HardwareKeyLicenseManager.csproj", "{0317196B-F078-43A2-A507-87F508ABD15E}"
 EndProject
