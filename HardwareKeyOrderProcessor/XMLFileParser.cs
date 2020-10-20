@@ -44,49 +44,33 @@ namespace HardwareKeyOrderProcessor
             XmlNodeList xLicenseList = null;
             xNodeList = new Dictionary<string, XmlNodeList>();
 
-
-
             try
             {
                 //Load xml file in doc object
                 XmlDocument doc = new XmlDocument();
                 doc.Load(fileName);
 
-
-
                 //Read Order node and store information in Dictionary Object
                 xOrderList = doc.SelectNodes("/Order");
                 xNodeList.Add("Order", xOrderList);
-
-
 
                 //Read Keys node and store information in Dictionary Object
                 xkeysList = doc.SelectNodes("/Order/Keys/Key");
                 xNodeList.Add("Keys", xkeysList);
 
-
-
                 //Read Licenses node and store information in Dictionary Object
                 xLicenseList = doc.SelectNodes("/Order/Keys/Key/Licenses/License");
                 xNodeList.Add("License", xLicenseList);
-
-
-
             }
             catch (XmlException xe)
             {
                 string error = $"There was a general error while reading xml file " + xe.Message;
                 log.Error(error);
-
-
-
             }
             catch (Exception ex)
             {
                 string error = $"There was a general error when retrieving info from file.. Error: " + ex.Message;
                 log.Error(error);
-
-
 
             }
 

@@ -55,10 +55,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="clsDownloadXML.cs" />
-    <Compile Include="clsGlobalClass.cs" />
-    <Compile Include="clsValidateXML.cs" />
+    <Compile Include="XMLOutputCreator.cs" />
+    <Compile Include="XMLDataTable.cs" />
+    <Compile Include="XMLFileValidator.cs" />
     <Compile Include="IXmlFileParser.cs" />
+    <Compile Include="logError.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XMLFileParser.cs" />
   </ItemGroup>
